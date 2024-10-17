@@ -1,51 +1,52 @@
 import java.util.*;
 
 class Solution {
-    boolean[] visited;
+    class Node{
+        String word;
+        int len;
+        
+        public Node(String word, int len){
+            this.word = word;
+            this.len = len;
+        }
+        String getWord(){
+            return this.word;
+        }
+        int getLen(){
+            return this.len;
+        }
+    }
     int answer;
     public int solution(String begin, String target, String[] words) {
-        visited = new boolean[words.length];
         answer = 0;
         
-        Queue<String> q = new LinkedList<>();
+        Queue<Node> q = new LinkedList<>();
         
-        q.add(begin);
+        q.add(new Node(begin, 0));
         
-        int len = 0;
-        int before = 1;
-        int after = 0;
         while(!q.isEmpty()){
-            String current = q.poll();
-            
-            if(len != 0 && current.equals(target)){
-                answer = len;
+            Node current = q.poll();
+			// 추가한 부분
+		    if(current.getLen() > words.length){
+			    break;
+		    }
+            if(current.getWord().equals(target)){
+                answer = current.getLen();
                 break;
             }
-            
-            if(words.length == len){
-                break;
-            }
-            for(int i = 0; i < words.length; i++){
-                boolean check = checkWord(current, words[i]);
+            for(int i=0; i<words.length; i++){
+                boolean check = checkWord(current.getWord(), words[i]);
                 if(check){
-                    q.add(words[i]);
-                    after++;
-                }        
+                    q.add(new Node(words[i], current.getLen()+1));
+                }
             }
-            before--;
-            if(before == 0){
-                before = after;
-                len++;
-                after =0;
-            }
-            
         }
         
         return answer;
     }
     boolean checkWord(String a, String b){
         int cnt = 0;
-        for(int i=0; i < a.length(); i++){
+        for(int i=0; i<a.length(); i++){
             if(a.charAt(i) != b.charAt(i)){
                 cnt++;
             }
