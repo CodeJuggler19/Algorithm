@@ -1,204 +1,101 @@
 import java.util.*;
-import java.io.*;
 
 public class Main {
-    static int[][][] map;
-    static int[][] cleaner = new int[2][2];
 
-    static Queue<Node> dust = new LinkedList<>();
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int r = sc.nextInt(); // r행
+        int c = sc.nextInt(); // c열
+        int t = sc.nextInt(); // t초
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        int[][] arr = new int[r][c];
+        List<int[]> airc = new ArrayList<>(); // 청정기 위치 저장
 
-        int r = Integer.parseInt(st.nextToken());
-        int c = Integer.parseInt(st.nextToken());
-        int t = Integer.parseInt(st.nextToken());
-
-        map = new int[r][c][2];
-
-        int temp = 0;
         for (int i = 0; i < r; i++) {
-            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < c; j++) {
-                map[i][j][0] = Integer.parseInt(st.nextToken());
-                if (map[i][j][0] == -1) {
-                    // 공기 청정기의 위치
-                    cleaner[temp][0] = i;
-                    cleaner[temp][1] = j;
-                    temp++;
-                } else if (map[i][j][0] != 0) {
-                    dust.add(new Node(i, j));
+                arr[i][j] = sc.nextInt();
+                if (arr[i][j] == -1) {
+                    airc.add(new int[]{i, j});
                 }
             }
         }
-        // 공기 청정기 위아래 확인
-        if (cleaner[0][1] < cleaner[1][1]) {
-            temp = cleaner[0][1];
-            cleaner[0][1] = cleaner[1][1];
-            cleaner[1][1] = temp;
-        }
-        // n초 후 새로운 Q를 넣기전 먼지가 확산된 상태 list
 
+        int[] dx = {-1, 1, 0, 0}; // 상하좌우
+        int[] dy = {0, 0, -1, 1};
 
-        int[] dr = {-1, 1, 0, 0};
-        int[] dc = {0, 0, -1, 1};
+        while (t-- > 0) {
+            int[][] check = new int[r][c];
 
-        int result = 0;
-
-        for (int i = 0; i < t; i++) {
-            Set<Node> check = new HashSet<>();
-            while (!dust.isEmpty()) {
-                Node current = dust.poll();
-                // 값이 업데이트(먼지) 되야하는 list
-                int divideValue = map[current.getR()][current.getC()][0] / 5;
-                int cnt = 0;
-                for (int j = 0; j < 4; j++) {
-                    int nr = current.getR() + dr[j];
-                    int nc = current.getC() + dc[j];
-
-                    if (nr >= 0 && nr < r && nc >= 0 && nc < c && map[nr][nc][0] != -1) {
-                        map[nr][nc][1] += divideValue;
-                        check.add(new Node(nr, nc));
-                        cnt++;
+            // 확산 상태를 미리 기록
+            for (int i = 0; i < r; i++) {
+                for (int j = 0; j < c; j++) {
+                    if (arr[i][j] != -1 && arr[i][j] != 0) {
+                        check[i][j] = arr[i][j];
                     }
                 }
-                map[current.getR()][current.getC()][0] -= (divideValue * cnt);
-                if (map[current.getR()][current.getC()][0] > 0) {
-                    check.add(new Node(current.getR(), current.getC()));
-                }
             }
 
-            for (Node node : check) {
-                int nr = node.getR();
-                int nc = node.getC();
-                map[nr][nc][0] += map[nr][nc][1];
-                map[nr][nc][1] = 0;
-            }
-
-
-            // 공기청정기 작동 (상단 반시계방향)
-            int upper = cleaner[0][0];
-            for (int j = upper - 1; j > 0; j--) {
-                map[j][0][0] = map[j - 1][0][0];
-            }
-            for (int j = 0; j < c - 1; j++) {
-                map[0][j][0] = map[0][j + 1][0];
-            }
-            for (int j = 0; j < upper; j++) {
-                map[j][c - 1][0] = map[j + 1][c - 1][0];
-            }
-            for (int j = c - 1; j > 1; j--) {
-                map[upper][j][0] = map[upper][j - 1][0];
-            }
-            map[upper][1][0] = 0;  // 공기청정기에서 나오는 바람
-
-// 공기청정기 작동 (하단 시계방향)
-            int lower = cleaner[1][0];
-            for (int j = lower + 1; j < r - 1; j++) {
-                map[j][0][0] = map[j + 1][0][0];
-            }
-            for (int j = 0; j < c - 1; j++) {
-                map[r - 1][j][0] = map[r - 1][j + 1][0];
-            }
-            for (int j = r - 1; j > lower; j--) {
-                map[j][c - 1][0] = map[j - 1][c - 1][0];
-            }
-            for (int j = c - 1; j > 1; j--) {
-                map[lower][j][0] = map[lower][j - 1][0];
-            }
-            map[lower][1][0] = 0;  // 공기청정기에서 나오는 바람
-
-
-//            // 공기 청정기 작동
-//            // 1
-//            for (int j = cleaner[0][0] - 1; j >= 0; j--) {
-//                if (j > 0) {
-//                    map[j][0][0] = map[j - 1][0][0];
-//                } else {
-//                    map[j][0][0] = 0;
-//                }
-//
-//            }
-//            for (int j = cleaner[1][0] + 1; j < r; j++) {
-//                if (j < r - 1) {
-//                    map[j][0][0] = map[j + 1][0][0];
-//                } else {
-//                    map[j][0][0] = 0;
-//                }
-//            }
-//            // 2
-//            for (int j = 0; j <= c-1; j++) {
-//                if (j != c-1) {
-//                    map[0][j][0] = map[0][j + 1][0];
-//                    map[r - 1][j][0] = map[r - 1][j + 1][0];
-//                } else {
-//                    map[0][j][0] = 0;
-//                    map[r - 1][j][0] = 0;
-//                }
-//            }
-//            // 3
-//            for (int j = 0; j <= cleaner[0][0]; j++) {
-//                if (j != cleaner[0][0]) {
-//                    map[j][c - 1][0] = map[j + 1][c - 1][0];
-//                } else {
-//                    map[j][c - 1][0] = 0;
-//                }
-//            }
-//            for (int j = r - 1; j >= cleaner[1][0]; j--) {
-//                if (j != cleaner[1][0]) {
-//                    map[j][c - 1][0] = map[j - 1][c - 1][0];
-//                } else {
-//                    map[j][c - 1][0] = 0;
-//                }
-//            }
-//            // 4
-//            for (int j = c-1; j > 0; j--) {
-//                if (j != 1) {
-//                    map[cleaner[0][0]][j][0] = map[cleaner[0][0]][j - 1][0];
-//                    map[cleaner[1][0]][j][0] = map[cleaner[1][0]][j - 1][0];
-//                } else {
-//                    map[cleaner[0][0]][j][0] = 0;
-//                    map[cleaner[1][0]][j][0] = 0;
-//                }
-//            }
-
-            for (int j = 0; j < r; j++) {
-                for (int k = 0; k < c; k++) {
-                    if(map[j][k][0] > 0){
-                        if(i == t-1){
-                            result += map[j][k][0];
-                        }else{
-                            dust.add(new Node(j, k));
+            // 확산
+            for (int i = 0; i < r; i++) {
+                for (int j = 0; j < c; j++) {
+                    if (arr[i][j] != 0 && arr[i][j] != -1 && check[i][j] != 0) {
+                        for (int k = 0; k < 4; k++) {
+                            int nx = i + dx[k];
+                            int ny = j + dy[k];
+                            if (nx >= 0 && nx < r && ny >= 0 && ny < c && arr[nx][ny] != -1) {
+                                arr[nx][ny] = arr[nx][ny] + check[i][j] / 5;
+                                arr[i][j] = arr[i][j] - (check[i][j] / 5);
+                            }
                         }
                     }
                 }
             }
+
+            // 위쪽 공기청정기 작동 (반시계 방향)
+            int aircx = airc.get(0)[0];
+            for (int i = aircx - 2; i >= 0; i--) { // 아래로
+                arr[i + 1][0] = arr[i][0];
+            }
+            for (int i = 1; i < c; i++) { // 왼쪽으로
+                arr[0][i - 1] = arr[0][i];
+            }
+            for (int i = 1; i <= aircx; i++) { // 위로
+                arr[i - 1][c - 1] = arr[i][c - 1];
+            }
+            for (int i = c - 2; i >= 1; i--) { // 오른쪽으로
+                arr[aircx][i + 1] = arr[aircx][i];
+            }
+            arr[aircx][1] = 0;
+
+            // 아래쪽 공기청정기 작동 (시계 방향)
+            int aircx2 = airc.get(1)[0];
+            for (int i = aircx2 + 2; i < r; i++) { // 위로
+                arr[i - 1][0] = arr[i][0];
+            }
+            for (int i = 1; i < c; i++) { // 왼쪽으로
+                arr[r - 1][i - 1] = arr[r - 1][i];
+            }
+            for (int i = r - 2; i >= aircx2; i--) { // 아래로
+                arr[i + 1][c - 1] = arr[i][c - 1];
+            }
+            for (int i = c - 2; i >= 1; i--) { // 오른쪽으로
+                arr[aircx2][i + 1] = arr[aircx2][i];
+            }
+            arr[aircx2][1] = 0;
         }
 
-        System.out.println(result);
-        br.close();
+        // 남은 먼지 합 계산
+        int sum = 0;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (arr[i][j] != -1) {
+                    sum += arr[i][j];
+                }
+            }
+        }
+
+        System.out.println(sum);
+        sc.close();
     }
-
-
-    static class Node {
-        int r;
-        int c;
-
-        public Node(int r, int c) {
-            this.r = r;
-            this.c = c;
-        }
-
-        int getR() {
-            return this.r;
-        }
-
-        int getC() {
-            return this.c;
-        }
-
-    }
-
 }
