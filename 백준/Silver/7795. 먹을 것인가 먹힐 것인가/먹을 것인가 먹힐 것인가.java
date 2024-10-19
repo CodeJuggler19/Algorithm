@@ -39,18 +39,18 @@ public class Main {
     }
 
     static void eat(int start, int end, int a) {
-//        if (start == end) {
-//            if (b[start] < a) result++;
-//            return;
-//        }
-//        if(start +1 == end){
-//            if(b[start] < a) result++;
-//            if(b[end] < a) result++;
-//            return;
-//        }
-        if(start> end){
+        if (start == end) {
+            if (b[start] < a) result++;
             return;
         }
+        if(start +1 == end){
+            if(b[start] < a) result++;
+            if(b[end] < a) result++;
+            return;
+        }
+//        if(start> end){
+//            return;
+//        }
         int mid = (start + end) / 2;
 
         if (b[mid] < a) {
