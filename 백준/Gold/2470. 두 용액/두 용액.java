@@ -5,6 +5,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int n = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -24,7 +25,7 @@ public class Main {
         int result = Integer.MAX_VALUE;
 
         while (low < high) {
-            int sum = num[low] + num[high]; 
+            int sum = num[low] + num[high];
             if ( Math.abs(sum) < result) {
                 result = Math.abs(sum);
                 answer_1 = num[low];
@@ -38,6 +39,12 @@ public class Main {
             }
         }
 
-        System.out.println(answer_1 + " " + answer_2);
+//        System.out.println(answer_1 + " " + answer_2);
+        bw.write(String.valueOf(answer_1));
+        bw.write(" ");
+        bw.write(String.valueOf(answer_2));
+        bw.flush();
+        bw.close();
+        br.close();
     }
 }
