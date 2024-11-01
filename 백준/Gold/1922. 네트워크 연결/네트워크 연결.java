@@ -1,10 +1,27 @@
-import java.util.*;
+
 import java.io.*;
+import java.util.*;
 
 public class Main {
+    static class Edge implements Comparable<Edge>{
+        int start;
+        int end;
+        int weight;
 
-    public static void main(String[] args) throws IOException {
+        public Edge(int start, int end, int weight){
+            this.start = start;
+            this.end = end;
+            this.weight = weight;
+        }
+        @Override
+        public int compareTo(Edge e){
+            return this.weight - e.weight;
+        }
+    }
+    static List<Edge> edgeList;
 
+    static int[] parent;
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
@@ -12,84 +29,55 @@ public class Main {
 
         int M = Integer.parseInt(br.readLine());
 
+        StringTokenizer st;
 
-        Set<Integer> set = new HashSet<>();
+        edgeList = new ArrayList<>();
 
-        Queue<Node> q = new PriorityQueue<>();
-
-        List<List<Node>> list = new ArrayList<>();
-        for (int i = 0; i <= N; i++) {
-            list.add(new ArrayList<>());
-        }
-
-        int min = Integer.MAX_VALUE;
-        int min_a = 0;
-        int min_b = 0;
-        for (int i = 0; i < M; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
+        for(int i = 0; i < M; i++){
+            st = new StringTokenizer(br.readLine());
             int start = Integer.parseInt(st.nextToken());
             int end = Integer.parseInt(st.nextToken());
-            int cost = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
 
-            list.get(start).add(new Node(cost, end, end));
-            list.get(end).add(new Node(cost, start, start));
-
-            if (cost < min) {
-                min = cost;
-                min_a = start;
-                min_b = end;
-            }
+            edgeList.add(new Edge(start, end, weight));
         }
 
-        q.add(new Node(min, min_a, min_b));
+        Collections.sort(edgeList);
 
-        int cnt = 0;
+        parent = new int[N + 1];
+        for(int i = 1; i <= N; i++){
+            parent[i] = i;
+        }
+
         int result = 0;
+        for(int i = 0; i < edgeList.size(); i++){
+            Edge edge = edgeList.get(i);
 
-        while (!q.isEmpty() || cnt < N -1) {
-            Node current = q.poll();
-
-            if (set.contains(current.a) && set.contains(current.b)) {
-                continue;
-            }
-            set.add(current.a);
-            set.add(current.b);
-
-            result += current.cost;
-            cnt++;
-
-            for (Node node : list.get(current.a)){
-                q.add(new Node(node.cost, current.a, node.b));
-            }
-
-            for (Node node : list.get(current.b)){
-                q.add(new Node(node.cost, current.b, node.a));
+            if(find(edge.start) != find(edge.end)){
+                result += edge.weight;
+                union(edge.start, edge.end);
             }
 
         }
-        System.out.println(result);
-
+        bw.write(result + "\n");
         bw.flush();
         bw.close();
         br.close();
-
-    }
-    static class Node implements Comparable<Node> {
-        int cost;
-        int a;
-        int b;
-
-        public Node(int cost, int a, int b) {
-            this.cost = cost;
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public int compareTo(Node node) {
-            return this.cost >= node.cost ? 1 : -1;
-        }
     }
 
+    static int find(int x){
+        if(x == parent[x]) return x;
+
+//        return parent[x] = find(parent[x]);
+        return find(parent[x]);
+    }
+
+    static void union(int x, int y){
+        x = find(x);
+        y = find(y);
+
+        if(x != y){
+            parent[y] = x;
+        }
+    }
 }
-
