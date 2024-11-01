@@ -40,12 +40,8 @@ public class Main {
     }
 
     static String find(String x){
-//        if(x.equals(parent.get(x))) return x;
-//
-////        return parent.replace(x, find(parent.get(x)));
-//        return find(parent.get(x));
         if (!x.equals(parent.get(x))) {
-            parent.put(x, find(parent.get(x))); // Path compression
+            parent.replace(x, find(parent.get(x))); // Path compression
         }
         return parent.get(x);
     }
