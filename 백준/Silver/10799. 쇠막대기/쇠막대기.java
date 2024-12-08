@@ -1,27 +1,33 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
+import java.io.*;
+import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringBuilder sb = new StringBuilder(br.readLine());
-
-        int check = 0;
         int result = 0;
-        for (int i = 0; i < sb.length(); i++) {
-            if(sb.charAt(i) == '('){
-                check++;
-            }else if(sb.charAt(i) == ')'){
-                check--;
-                if(sb.charAt(i-1) == '('){
-                    result+=check;
-                }else {
-                    result ++;
+
+        int start = 0;
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        char[] string = st.nextToken().toCharArray();
+        for(int i = 0; i < string.length; i++){
+            if(string[i] == '('){
+                start++;
+            }else if(string[i] == ')'){
+                if(string[i -1] == ')'){
+                    result += 1;
+                    start --;
+                }else{
+                    start--;
+                    result += start;
                 }
             }
         }
-        System.out.println(result);
+
+        bw.write(result+"");
+        bw.flush();
+        bw.close();
+        br.close();
     }
 }
