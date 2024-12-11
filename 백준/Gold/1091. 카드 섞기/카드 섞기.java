@@ -33,13 +33,23 @@ public class Main {
         }
         int cnt = 0;
 
-        Set<String> seen = new HashSet<>();
+//        for (int i = 0; i < 3 ; i++) {
+//            System.out.println(pCard.get(i));
+//        }
+//
+//        Set<Integer> test = pCard.get(0);
+//        test.remove(3);
+//
+//        for (int i = 0; i < 3 ; i++) {
+//            System.out.println(pCard.get(i));
+//        }
 
+        // memo 안되는 경우 순서가 0~ N 다시 돌아올 경우
         while (true) {
             boolean check = true;
             for (int i = 0; i < 3; i++) {
                 Set<Integer> temp = pCard.get(i);
-                for (int j = 0; i + j * 3 < N; j++) {
+                for (int j = 0; i + j * 3 < N; j++) {  // 조건 추가
                     if (!temp.contains(card[i + j * 3])) {
                         check = false;
                         break;
@@ -50,19 +60,24 @@ public class Main {
             if (check) {
                 break;
             } else {
-                String cardState = Arrays.toString(card);
-                if (seen.contains(cardState)) {
-                    bw.write(-1 + "\n");
-                    bw.flush();
-                    return;
-                }
-                seen.add(cardState);
-
                 card = swap(card);
                 cnt++;
             }
+
+
+            int sameCheck = 0;
+            for (int i = 0; i < N; i++) {
+                if (card[i] == i) {
+                    sameCheck++;
+                }
+            }
+            if (sameCheck == N) {
+                bw.write(-1 + "");
+                bw.flush();
+                return;
+            }
         }
-        bw.write(cnt + "\n");
+        bw.write(cnt + "");
         bw.flush();
         bw.close();
         br.close();
@@ -70,6 +85,7 @@ public class Main {
 
     static int[] swap(int[] card) {
         int[] result = new int[card.length];
+
         for (int i = 0; i < card.length; i++) {
             result[S[i]] = card[i];
         }
