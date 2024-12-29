@@ -8,6 +8,7 @@ public class Main {
 
     static boolean[] visited;
     static List<List<Integer>> list = new ArrayList<>();
+
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -33,7 +34,7 @@ public class Main {
 
         for(int i = 1; i <= N; i++){
             if(!visited[i]){
-                dfs(i);
+                bfs(i);
                 result ++;
             }
         }
@@ -44,17 +45,21 @@ public class Main {
         br.close();
     }
 
-    static void dfs(int num){
-        if(visited[num]){
-            return;
-        }
+    static void bfs(int start){
+        Queue<Integer> q = new LinkedList<>();
+        visited[start] = true;
+        q.add(start);
 
-        visited[num] = true;
+        while(!q.isEmpty()){
+            int cur = q.poll();
 
-        for(Integer next : list.get(num)){
-            if(!visited[next]){
-                dfs(next);
+            for(Integer num : list.get(cur)){
+                if(!visited[num]){
+                    visited[num] = true;
+                    q.add(num);
+                }
             }
         }
+
     }
 }
