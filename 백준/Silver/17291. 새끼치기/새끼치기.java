@@ -1,5 +1,5 @@
+
 import java.io.*;
-import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException{
@@ -7,26 +7,21 @@ public class Main {
 
         int N = Integer.parseInt(br.readLine());
 
-        Queue<Integer> bugs = new LinkedList<>();
-
-        bugs.add(3);
+        int[] dp = new int[N + 1];
+        dp[0] = 1;
+        dp[1] = 1;
 
         for(int i = 2; i <= N; i++){
-            int size = bugs.size();
-            for(int j = 0; j < size; j++){
-                int cur = bugs.poll();
-                if(i % 2 == 0){
-                    bugs.add(4);
-                }else{
-                    bugs.add(3);
+            dp[i] = dp[i - 1] * 2;
+            if(i % 2 == 0){
+                if(i - 4 >= 0){
+                    dp[i] -= dp[i - 4];
                 }
-                if(cur > 1){
-                    bugs.add(cur - 1);
+                if(i - 5 >= 0){
+                    dp[i] -= dp[i - 5];
                 }
             }
         }
-
-        System.out.println(bugs.size());
-        br.close();
+        System.out.println(dp[N]);
     }
 }
