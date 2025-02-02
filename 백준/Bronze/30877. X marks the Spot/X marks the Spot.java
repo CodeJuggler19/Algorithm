@@ -11,14 +11,13 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             String S = st.nextToken();
             String T = st.nextToken();
-            int idx = 0;
-            for (int j = 0; j < S.length(); j ++){
-                int cur = (int)S.charAt(j);
-                if(cur == 88 || cur == 120){
-                    idx = j;
-                    break;
-                }
+            int idx;
+            if(S.contains("X")){
+                idx = S.indexOf('X');
+            }else{
+                idx = S.indexOf('x');
             }
+
             int value = (int)T.charAt(idx);
             if(value >= 97){
                 value -= 32;
