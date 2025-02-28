@@ -16,10 +16,7 @@ class Solution {
             int e = edge[1];
             edgeList.get(s).add(e);
         }
-        // for(int i = 0; i < info.length; i++){
-        //     System.out.println(edgeList.get(i));
-        // }
-        
+   
         find(edgeList.get(0), 1, 0, info);
         int answer = max;
         return answer;
