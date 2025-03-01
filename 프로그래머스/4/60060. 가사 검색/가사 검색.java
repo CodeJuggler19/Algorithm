@@ -66,13 +66,13 @@ class Solution {
     }
     static int search(List<String> wordList, String query){
         int s = 0;
-        int e = wordList.size();
-        while(s < e){
+        int e = wordList.size() - 1;
+        while(s <= e){
             int m = (s + e) / 2;
-            if(query.compareTo(wordList.get(m)) >= 0){
+            if(query.compareTo(wordList.get(m)) > 0){
                 s = m + 1;
             }else{
-                e = m;
+                e = m - 1;
             }
         }
         return s;
@@ -80,4 +80,5 @@ class Solution {
     static String reverse(String s){
         return new StringBuffer(s).reverse().toString();
     }
+    
 }
