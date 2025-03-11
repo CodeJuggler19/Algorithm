@@ -1,33 +1,36 @@
 import java.io.*;
 import java.util.*;
+
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        Stack<Integer> stack = new Stack<>();
+
+        char[] array = br.readLine().toCharArray();
 
         int result = 0;
-
-        int start = 0;
-
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        char[] string = st.nextToken().toCharArray();
-        for(int i = 0; i < string.length; i++){
-            if(string[i] == '('){
-                start++;
-            }else if(string[i] == ')'){
-                if(string[i -1] == ')'){
+        char before = array[0];
+        stack.push(1);
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] == '(') {
+                stack.push(1);
+                before = '(';
+            } else {
+                if (before == '(') {
+                    stack.pop();
+                    if(!stack.isEmpty()){
+                        result += stack.size();
+                    }
+                } else {
+                    stack.pop();
                     result += 1;
-                    start --;
-                }else{
-                    start--;
-                    result += start;
                 }
+                before = ')';
             }
         }
 
-        bw.write(result+"");
-        bw.flush();
-        bw.close();
+        System.out.println(result);
         br.close();
     }
 }
