@@ -60,8 +60,8 @@ public class Main {
                         if(costs[next.num] > costs[cur.num] + next.cost){
                             costs[next.num] = costs[cur.num] + next.cost;
                             from[next.num] = cur.num;
+                            q.add(new Node(next.num, costs[next.num]));
                         }
-                        q.add(new Node(next.num, costs[next.num]));
                     }
                 }
             }
