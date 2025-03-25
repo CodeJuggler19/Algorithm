@@ -2,68 +2,60 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int[] parent; // 유니온 파인드 루트 노드 배열
-    static int[] level; // 각 노드마다 층의 개수
-    public static void main(String[] args)throws IOException{
+    static Map<String, Integer> cnt;
+//    static Set<String> people;
+    static Map<String, String> parent;
+
+
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st;
 
         int T = Integer.parseInt(br.readLine());
-        StringBuilder sb = new StringBuilder();
-        while (T-- > 0) {
-            int F = Integer.parseInt(br.readLine());
 
-            parent = new int[F * 2];
-            level = new int[F * 2];
-            for (int i = 0; i < F * 2; i++) {
-                parent[i] = i;
-                level[i] = 1;
-            }
+        for (int i = 0; i < T; i++) {
+            int num = Integer.parseInt(br.readLine());
+//            people = new HashSet<>();
+            parent = new HashMap<>();
+            cnt = new HashMap<>();
+            for (int j = 0; j < num; j++) {
+                String[] name = br.readLine().split(" ");
 
-            int idx = 0;
-            Map<String, Integer> map = new HashMap<>();
-
-            for (int i = 0; i < F; i++) {
-                st = new StringTokenizer(br.readLine());
-                String a = st.nextToken();
-                String b = st.nextToken();
-
-                if (!map.containsKey(a)) {
-                    map.put(a, idx++);
+                for (int z = 0; z < 2; z++) {
+                    if (!parent.containsKey(name[z])) {
+//                        people.add(name[z]);
+                        parent.put(name[z], name[z]);
+                        cnt.put(name[z], 1);
+                    }
                 }
+                union(name[0], name[1]);
 
-                if (!map.containsKey(b)) {
-                    map.put(b, idx++);
-                }
-                sb.append(union(map.get(a), map.get(b)) + "\n");
+                bw.write((cnt.get(find(name[1]))) + "\n");
             }
         }
 
-        bw.write(sb.toString());
         bw.flush();
         bw.close();
         br.close();
+
     }
 
-    public static int find(int x) {
-        if (x == parent[x]) {
-            return x;
+    static String find(String x){
+        if (!x.equals(parent.get(x))) {
+            parent.replace(x, find(parent.get(x))); // Path compression
         }
-        return parent[x] = find(parent[x]);
+        return parent.get(x);
+//        if (x.equals(parent.get(x))) return x;
+//
+//        return parent.put(x, find(parent.get(x)));
     }
-
-    // 합집합 연산
-    public static int union(int x, int y) {
+    static void union(String x, String y){
         x = find(x);
         y = find(y);
 
-        // 항상 x < y인 값이 들어온다고 가정
-        if (x != y) {
-            parent[y] = x;
-            level[x] += level[y]; // y에 있던 층의 개수를 더해 줌.
+        if(!x.equals(y)){
+            parent.replace(y, x);
+            cnt.replace(x, cnt.get(x) + cnt.get(y));
         }
-
-        return level[x];
     }
 }
