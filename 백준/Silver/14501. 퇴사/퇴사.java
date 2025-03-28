@@ -26,7 +26,7 @@ public class Main {
         }
         for (int i = 1; i <= N; i++) {
             if (i + T[i] <= N + 1) {
-                dp[i] += P[i];
+                dp[i] = P[i];
             }
             int max = 0;
             for (int j = i - 1; j >= 1; j--) {
@@ -38,7 +38,7 @@ public class Main {
                 dp[i] = max;
             }
         }
-        int result =0;
+        int result = 0;
         for (int i = 1; i <=N ; i++) {
             if(dp[i] > result){
                 result = dp[i];
