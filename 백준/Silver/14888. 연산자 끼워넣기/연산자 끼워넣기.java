@@ -1,53 +1,88 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-
     static int N;
-    static int[] numbers;   // 주어진 숫자 배열
-    static int[] operators; // 덧셈, 뺄셈, 곱셈, 나눗셈의 개수를 저장하는 배열
-    static int max = Integer.MIN_VALUE;
+    static int[] list;
+    static int[] num;
+    static int[] operator = new int[4];
+    // +, -, *, /
     static int min = Integer.MAX_VALUE;
+    static int max = Integer.MIN_VALUE;
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        // 첫 번째 입력: N개의 수열
-        N = sc.nextInt();
-        numbers = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
-            numbers[i] = sc.nextInt();
+        N = Integer.parseInt(br.readLine());
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        num = new int[N];
+
+        list = new int[N - 1];
+
+        for(int i = 0; i < N; i++){
+            num[i] = Integer.parseInt(st.nextToken());
         }
-        // 두 번째 입력: 연산자의 개수
-        operators = new int[4]; // 덧셈, 뺄셈, 곱셈, 나눗셈
-        for (int i = 0; i < 4; i++) {
-            operators[i] = sc.nextInt();
-        }
-        cal(numbers[1],1, operators );
 
+        st = new StringTokenizer(br.readLine());
+
+        for(int i = 0; i < 4; i++){
+            operator[i] = Integer.parseInt(st.nextToken());
+        }
+
+        select(0);
         System.out.println(max);
         System.out.println(min);
+        br.close();
     }
 
-    static void cal(int value, int current, int[] op) {
-        if (op[0] + op[1] + op[2] + op[3] == 0 || current >= N) {
-            max = Math.max(max, value);
-            min = Math.min(min, value);
+
+    static void select(int idx){
+
+        if(idx == N - 1){
+            cal();
             return;
         }
-        for (int i = 0; i < 4; i++) {
-            if (op[i] != 0) {
-                if (i == 0) {
-                    cal(value + numbers[current + 1], current + 1, new int[]{op[0] - 1, op[1], op[2], op[3]});
-                } else if (i == 1) {
-                    cal(value - numbers[current + 1], current + 1, new int[]{op[0], op[1] - 1, op[2], op[3]});
-                } else if (i == 2) {
-                    cal(value * numbers[current + 1], current + 1, new int[]{op[0], op[1], op[2] - 1, op[3]});
-                } else {
-                    cal(value / numbers[current + 1], current + 1, new int[]{op[0], op[1], op[2], op[3] - 1});
+
+        for(int i = 0; i < 4; i++){
+            if(operator[i] > 0){
+                list[idx] = i;
+                operator[i] --;
+                select(idx + 1);
+                operator[i] ++;
+            }
+        }
+    }
+
+    static void cal(){
+        int[] temp = new int[N];
+
+        for(int i = 0; i < N; i++){
+            temp[i] = num[i];
+        }
+
+        for(int i = 0; i < N - 1; i++){
+            if(list[i] == 0){ // +
+                temp[i + 1] = temp[i] + temp[i + 1];
+            }else if(list[i] == 1){ // -
+                temp[i + 1] = temp[i] - temp[i + 1];
+            }else if(list[i] == 2){// *
+                temp[i + 1] = temp[i] * temp[i + 1];
+            }else{ // /
+                boolean check = false;
+                if(temp[i] < 0){
+                    temp[i] *= (-1);
+                    check = true;
+                }
+
+                temp[i + 1] = temp[i] / temp[i + 1];
+                if(check){
+                    temp[i + 1] *= (-1);
                 }
             }
         }
 
+        min = Math.min(min, temp[N - 1]);
+        max = Math.max(max, temp[N - 1]);
     }
 }
