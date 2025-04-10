@@ -3,14 +3,11 @@ import java.util.*;
 
 public class Main {
     static int R, C, M;
-    static Shark[][] map;
-    static int[] dr = {0, -1, 1, 0, 0}; // 1~4: 상,하,우,좌
-    static int[] dc = {0, 0, 0, 1, -1};
 
     static class Shark {
         int r, c, s, d, z;
 
-        Shark(int r, int c, int s, int d, int z) {
+        public Shark(int r, int c, int s, int d, int z) {
             this.r = r;
             this.c = c;
             this.s = s;
@@ -19,12 +16,15 @@ public class Main {
         }
     }
 
+    static int[] dr = {0, -1, 1, 0, 0};
+    static int[] dc = {0, 0, 0, 1, -1};
+    static Shark[][] map;
     static List<Shark> sharks = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
+        StringTokenizer st = new StringTokenizer(br.readLine());
         R = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
@@ -42,29 +42,31 @@ public class Main {
 
         int result = 0;
 
-        for (int fisher = 1; fisher <= C; fisher++) {
-            int minR = Integer.MAX_VALUE;
+        for (int i = 1; i <= C; i++) {
+            int min = Integer.MAX_VALUE;
             Shark target = null;
-            for (Shark s : sharks) {
-                if (s.c == fisher && s.r < minR) {
-                    minR = s.r;
-                    target = s;
+            for (Shark shark : sharks) {
+                if (shark.c == i && shark.r < min) {
+                    min = shark.r;
+                    target = shark;
                 }
             }
+
             if (target != null) {
                 result += target.z;
                 sharks.remove(target);
             }
 
             map = new Shark[R + 1][C + 1];
-            for (Shark s : sharks) {
-                int r = s.r;
-                int c = s.c;
-                int d = s.d;
-                int sSpeed = s.s;
+
+            for (Shark shark : sharks) {
+                int r = shark.r;
+                int c = shark.c;
+                int d = shark.d;
+                int s = shark.s;
 
                 int len = (d <= 2) ? (R - 1) * 2 : (C - 1) * 2;
-                int move = sSpeed % len;
+                int move = s % len;
 
                 while (move-- > 0) {
                     int nr = r + dr[d];
@@ -81,22 +83,23 @@ public class Main {
                     c = nc;
                 }
 
-                Shark moved = new Shark(r, c, s.s, d, s.z);
+                Shark moved = new Shark(r, c, shark.s, d, shark.z);
                 if (map[r][c] == null || map[r][c].z < moved.z) {
                     map[r][c] = moved;
                 }
             }
-
             sharks.clear();
-            for (int i = 1; i <= R; i++) {
-                for (int j = 1; j <= C; j++) {
-                    if (map[i][j] != null) {
-                        sharks.add(map[i][j]);
+
+            for (int j = 1; j <= R; j++) {
+                for (int k = 1; k <= C; k++) {
+                    if (map[j][k] != null) {
+                        sharks.add(map[j][k]);
                     }
                 }
             }
-        }
 
+        }
         System.out.println(result);
+        br.close();
     }
 }
