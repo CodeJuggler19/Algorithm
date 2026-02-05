@@ -5,7 +5,8 @@ public class Main {
 	static int R;
 	static int C;
 	static char[][] board;
-	static Set<Integer> alphabet = new HashSet<>();
+//	static Set<Integer> alphabet = new HashSet<>();
+	static boolean[] visited = new boolean[26];
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -23,7 +24,7 @@ public class Main {
 			}
 		}
 		
-		alphabet.add((int) board[1][1]);
+		visited[board[1][1] - 'A'] = true;
 		
 		dfs(1, 1, 1);
 		
@@ -34,6 +35,7 @@ public class Main {
 	static int[] dr = {-1, 1, 0, 0};
 	static int[] dc = {0, 0, -1, 1};
 	static int max = Integer.MIN_VALUE;
+	
 	static void dfs(int r, int c, int depth) {
 		
 		if(max < depth) {
@@ -45,13 +47,14 @@ public class Main {
 			int nc = c + dc[i];
 			
 			if(nr > 0 && nr <= R && nc > 0 && nc <= C
-					&& !alphabet.contains((int) board[nr][nc])) {
-				alphabet.add((int)board[nr][nc]);
+					&& !visited[board[nr][nc] - 'A']) {
+				visited[board[nr][nc] - 'A'] = true;
 				dfs(nr, nc, depth + 1);
-				alphabet.remove((int)board[nr][nc]);
+				visited[board[nr][nc] - 'A'] = false;
 			}
 		}
 		
 	}
 
 }
+
