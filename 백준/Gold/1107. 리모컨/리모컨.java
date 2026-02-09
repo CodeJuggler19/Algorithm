@@ -4,7 +4,6 @@ import java.util.*;
 public class Main {
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int curCh = 100;
 		int N = Integer.parseInt(br.readLine());
 		int M = Integer.parseInt(br.readLine());
 		
@@ -19,13 +18,13 @@ public class Main {
 		
 		int min = Integer.MAX_VALUE;
 		
-		min = Math.abs(curCh - N); 
+		min = Math.abs(100 - N); 
 		
 		for(int i = 0; i <= 1000000; i++) {
 			String numStr = String.valueOf(i);
 			boolean yn = true;
 			for(char num : numStr.toCharArray()) {
-				if(check[Integer.parseInt(String.valueOf(num))]) {
+				if(check[num - '0']) {
 					yn = false;
 					break;
 				}
@@ -33,7 +32,7 @@ public class Main {
 			
 			if(yn) {
 				int pow = numStr.length();
-				int diff = Math.abs(N - Integer.parseInt(numStr));
+				int diff = Math.abs(N - i);
 				min = Math.min(min, pow + diff);
 			}
 		}
