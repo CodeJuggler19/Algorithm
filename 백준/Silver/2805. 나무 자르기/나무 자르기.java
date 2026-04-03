@@ -2,43 +2,50 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    static int N;
+    static int[] trees;
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        long M = Integer.parseInt(st.nextToken());
 
-        List<Integer> trees = new ArrayList<>();
+        trees = new int[N];
+
         st = new StringTokenizer(br.readLine());
 
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < N; i++) {
-            int len = Integer.parseInt(st.nextToken());
-            max = Math.max(max, len);
-            trees.add(len);
+        for(int i = 0; i < N; i++){
+            trees[i] = Integer.parseInt(st.nextToken());
         }
 
         int left = 0;
-        int right = max;
-
+        int right = 1000000000;
         while(left < right){
-            int mid = (left + right) / 2;
+            int mid = (left + right + 1) / 2;
 
-            long sum = 0;
+            long sum = calculate(mid);
 
-            for(int i = 0; i < trees.size(); i++){
-                if(trees.get(i) > mid) sum += (trees.get(i) - mid);
-            }
-
-            if(M > sum){
-                right = mid;
+            if(M <= sum){
+                left = mid;
             }else{
-                left = mid + 1;
+                right = mid - 1;
             }
+
         }
 
-        System.out.println(left - 1);
+        System.out.println(right);
+
         br.close();
+    }
+
+    public static long calculate(int height){
+        long sum = 0;
+        for(int i = 0; i < N; i++){
+            if(trees[i] > height){
+                sum += trees[i] - height;
+            }
+        }
+        return sum;
     }
 }
