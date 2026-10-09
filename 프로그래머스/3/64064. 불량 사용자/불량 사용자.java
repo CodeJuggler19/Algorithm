@@ -2,10 +2,8 @@ import java.util.*;
 
 class Solution {
     static List<List<Integer>> list = new ArrayList<>();
-    static int answer = 0;
-    static Set<String> result = new HashSet<>();
+    static Set<Integer> result = new HashSet<>(); 
     public int solution(String[] user_id, String[] banned_id) {
-        
         
         for(int i = 0; i < banned_id.length; i++){
             list.add(new ArrayList<>());
@@ -21,53 +19,24 @@ class Solution {
             }
         }
         
-        // for(int i = 0; i < list.size(); i++){
-        //     System.out.println(banned_id[i]);
-        //     for(Integer idx : list.get(i)){
-        //         System.out.print(idx+ ": " +user_id[idx] + " ");
-        //     }
-        //     System.out.println("");
-        // }
         
-        visited = new boolean[user_id.length];
-        
-        backTracking(0);
+        backTracking(0, 0);
         
         return result.size();
     }
-    static boolean[] visited;
     
-    static void backTracking(int idx){
+    static void backTracking(int idx, int mask) {
         if(idx == list.size()){
-            int[] temp = new int[list.size()];        
-            int cnt = 0;
-            for(int i = 0; i < visited.length; i++){
-                if(visited[i]) temp[cnt++] = i;
-            }
-            Arrays.sort(temp);
-            StringBuilder sb = new StringBuilder();
-            for(int ele : temp){
-                sb.append(ele);
-            }
-            
-            if(!result.contains(sb.toString())){
-                answer++;
-                result.add(sb.toString());
-            }
-            
-            answer++;
+            result.add(mask);
             return;
         }
         
         for(Integer ele : list.get(idx)){
-            if(!visited[ele]){
-                visited[ele] = true;
-                backTracking(idx + 1);
-                visited[ele] = false;
+            if((mask & (1 << ele)) == 0){
+                backTracking(idx + 1, mask | (1 << ele));
             }
         }
     }
-    
     
     static boolean check(String banId, String id){
         if(banId.length() != id.length()) return false;
