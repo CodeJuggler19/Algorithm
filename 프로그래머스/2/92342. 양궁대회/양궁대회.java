@@ -45,35 +45,23 @@ class Solution {
             }
         }
         
+        int diff = l_score - a_score;
+        if(need > N || diff <= 0 || max > diff) return;
         
-        if(need > N || l_score <= a_score || max > (l_score - a_score)) return;
         
-        if( max < (l_score - a_score)){
-            max = (l_score - a_score);    
-            result[10] = N - need;
-            for(int i = 0; i <= 10; i++){
-                answer[i] = result[i];
-            }
-        }else if(max == (l_score - a_score)){
-            if(result[10] < N - need){
-                result[10] = N - need;
-                for(int i = 0; i <= 10; i++){
-                    answer[i] = result[i];
-                }   
-            }else if(result[10] == N - need){
-                for(int i = 9; i >= 0; i--){
-                    if(answer[i] == result[i]) continue;
-                    else if(answer[i] > result[i]) return;
-                    else{
-                        result[10] = N - need;
-                        for(int j = 0; j <= 10; j++){
-                            answer[j] = result[j];
-                        }
-                        return;
-                    }
-                        
-                }
-            }
+        result[10] = N - need;
+        
+        if(max < diff){
+            max = diff;
+            answer = result;
+            return;
+        }
+        
+        for(int i = 10; i >= 0; i--){
+            if(result[i] == answer[i]) continue;
+            if(result[i] > answer[i]) answer = result;
+            
+            return;
         }
         
     }
