@@ -1,57 +1,48 @@
 import java.util.*;
 
 class Solution {
-    public int find(int x){
-        if(parent[x] == x) return x;
-        return parent[x] = find(parent[x]);
-    }
-    
-    public void union(int x, int y){
-        int x1 = find(x);
-        int y1 = find(y);
-        
-        if(x1 != y1){
-            parent[y1] = x1;
-        }
-        
-    }
-    static int[] parent;
+    static boolean[] visited;
+    static int[][] link;
     public int solution(int n, int[][] computers) {
         int answer = 0;
         
-        parent = new int[n + 1];
+        link = new int[computers.length][computers.length];
+        link = computers;
         
-        for(int i = 1; i <= n; i++){
-            parent[i] = i;
-        }
+        visited = new boolean[computers.length];        
         
         for(int i = 0; i < computers.length; i++){
-            for(int j = 0; j < computers[i].length; j++){
-                if(i == j) continue;
-                
-                if(computers[i][j] == 1){
-                    int x = i + 1;
-                    int y = j + 1;
-                    if(find(x) != find(y)){
-                        union(x, y);    
-                    }
-                    
-                }
-                
+            if(!visited[i]){
+                bfs(i);
+                answer++;
             }
         }
-        
-        boolean[] check = new boolean[n + 1];
-        for(int i = 1; i <= n; i++){
-            check[find(i)] = true;
-        }
-        
-        for(int i = 1; i <= n; i++){
-            if(check[i]){
-                answer++;  
-            } 
-        }
-        
+
         return answer;
+    }
+    
+    void bfs(int idx){
+        System.out.println(idx);
+        Queue<Integer> q = new LinkedList<>();
+        
+        q.add(idx);
+        
+        while(!q.isEmpty()){
+            int cur = q.poll();
+            
+            if(!visited[cur]){
+                visited[cur] = true;
+                
+                for(int i = 0; i < link[cur].length; i++){
+                    if(i == cur) continue;
+                    
+                    if(!visited[i] && link[cur][i] == 1){
+                        q.add(i);
+                    }
+                }
+            }
+            
+        }
+        
     }
 }
